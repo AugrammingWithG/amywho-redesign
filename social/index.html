@@ -96,6 +96,9 @@ Want to know where you rank? Link in bio.</p>
   </section>
 </div>
 <script>
+/* start each loop when it is on screen (some browsers skip muted autoplay), pause it when off screen */
+const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; v.muted = true; e.isIntersecting ? v.play().catch(() => {}) : v.pause(); }), { threshold: .25 });
+document.querySelectorAll('video').forEach(v => { v.preload = 'auto'; vio.observe(v); });
 document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click', async () => {
   const text = btn.dataset.copy.split(',').map(id => document.getElementById(id).textContent.trim()).join('\n\n');
   try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; }
