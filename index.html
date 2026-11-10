@@ -147,6 +147,26 @@ h3{font-size:clamp(1.3rem,1.6vw,1.55rem);line-height:1.2}
 @keyframes cue{0%{transform:scaleY(0);transform-origin:50% 0}45%{transform:scaleY(1);transform-origin:50% 0}55%{transform:scaleY(1);transform-origin:50% 100%}100%{transform:scaleY(0);transform-origin:50% 100%}}
 @media (max-width:760px){.hero{padding-block:44vh 8vh}.cue{display:none}}
 
+/* search for yourself */
+.search{display:grid;gap:.6rem;width:100%;max-width:34rem;margin-top:.3rem}
+.sbar{display:flex;align-items:center;gap:.6rem;background:var(--white);border:1.5px solid rgba(50,50,45,.28);border-radius:12px;padding:.4rem .4rem .4rem 1rem;box-shadow:0 18px 40px -26px rgba(50,50,45,.45);transition:border-color .3s,box-shadow .3s}
+.sbar:focus-within{border-color:var(--teal-700);box-shadow:0 0 0 4px rgba(52,173,162,.18),0 18px 40px -26px rgba(50,50,45,.45)}
+.sicon{width:1.2rem;height:1.2rem;flex:none;color:var(--fg-2)}
+.sbar input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 1.08rem/1.3 var(--body);color:var(--charcoal);padding:.6rem 0}
+.sbar input::placeholder{color:#66665D}
+.sbar input::-webkit-search-cancel-button{display:none}
+.sbar .btn{padding:.85rem 1.2rem;box-shadow:none}
+.s-note{font-size:.98rem;color:var(--fg-2);min-height:1.6em}
+.s-note b{color:var(--charcoal);font-weight:600}
+.you-result{position:fixed;left:0;top:0;z-index:1;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:.5rem;color:var(--charcoal);font:600 .86rem/1 var(--body);white-space:nowrap;opacity:0}
+.you-result b{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.you-result span{font:700 .95rem/1 var(--display);font-variant-numeric:tabular-nums}
+@media (max-width:760px){.you-result{display:none}}
+/* the five bands, printed flat: what the 3D bundle leaves behind under "Amy who?" */
+.band-rule{display:grid;gap:1px;width:100%;max-width:34rem}
+.band-rule i{display:block;height:4px;border-radius:2px}
+.band-rule i:nth-child(1){background:#CFE9E2}.band-rule i:nth-child(2){background:#82C8C2}.band-rule i:nth-child(3){background:#34ADA2}.band-rule i:nth-child(4){background:#23736C}.band-rule i:nth-child(5){background:#32322D}
+
 /* about: portrait over a tartan swatch cut from her suit */
 .about .copy{grid-column:1 / span 5}
 .plate-wrap{grid-column:8 / span 4;align-self:center;position:relative;isolation:isolate}
@@ -397,6 +417,7 @@ footer{position:relative;z-index:2}
   <li><a href="#ask" data-to="8"><span>Ask Amy</span><i></i></a></li>
 </ol>
 
+<div class="you-result" id="you-result" aria-hidden="true"><b id="yr-name"></b><span id="yr-rank">#6</span></div>
 <div class="tags" aria-hidden="true">
   <div class="tag" data-stage="2" data-pt="2.45,2.55"><i class="pin"></i><b class="ln"></b><span class="box"><strong data-count="54.4" data-dec="1">0%</strong>of all clicks go to the top three Google results.<small>Source: Backlinko</small></span></div>
   <div class="tag" data-stage="3" data-pt="-1.75,1.6"><i class="pin"></i><b class="ln"></b><span class="box"><strong data-count="76" data-dec="0">0%</strong>of people who search for something nearby on their phone visit a business within a day.<small>Source: Think with Google</small></span></div>
@@ -413,24 +434,20 @@ footer{position:relative;z-index:2}
         <h1 class="rise"><span class="tone">Get found</span> when your customers are looking for you.</h1>
         <div class="rv" style="display:grid;gap:1.4rem;justify-items:start">
           <p class="lede">Amy Who? Digital grows businesses with SEO, ads and websites. No jargon, just clear answers. Since 2012.</p>
-          <form class="interest" id="interest">
-            <fieldset style="border:0;margin:0;padding:0;min-width:0">
-              <legend>I'm interested in…</legend>
-              <div class="chips">
-                <label class="chip"><input type="checkbox" id="hi-seo" name="i" value="SEO"><span>SEO</span></label>
-                <label class="chip"><input type="checkbox" id="hi-gads" name="i" value="Google Ads"><span>Google Ads</span></label>
-                <label class="chip"><input type="checkbox" id="hi-meta" name="i" value="Meta Ads"><span>Meta Ads</span></label>
-                <label class="chip"><input type="checkbox" id="hi-web" name="i" value="Websites"><span>Websites</span></label>
-                <label class="chip"><input type="checkbox" id="hi-audit" name="i" value="Site Audit"><span>Site Audit</span></label>
-                <label class="chip"><input type="checkbox" id="hi-social" name="i" value="Social Media"><span>Social Media</span></label>
-                <label class="chip"><input type="checkbox" id="hi-consult" name="i" value="Consulting"><span>Consulting</span></label>
-              </div>
-            </fieldset>
-            <div class="actions">
-              <button class="btn" type="submit">Let's chat <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13M11 4.5 16.5 10 11 15.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-              <a class="textlink" href="#amy">Amy who?</a>
+          <form class="search" id="find" role="search" novalidate>
+            <label for="q" class="field-label">See your business found</label>
+            <div class="sbar">
+              <svg class="sicon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/><path d="m13 13 4.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              <input id="q" name="q" type="search" placeholder="Your business name" autocomplete="organization" maxlength="38" enterkeyhint="search">
+              <button class="btn" type="submit">Find me</button>
             </div>
+            <p class="s-note" id="s-note" aria-live="polite">Type your business and watch it climb to the top of the results.</p>
           </form>
+          <div class="actions">
+            <a class="btn" href="#ask" id="make-real" hidden>Make it real <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13M11 4.5 16.5 10 11 15.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="textlink" href="#ask">Let's chat</a>
+            <a class="textlink" href="#amy">Amy who?</a>
+          </div>
         </div>
       </div>
     </div>
@@ -441,6 +458,7 @@ footer{position:relative;z-index:2}
     <div class="grid frame">
       <div class="copy rv">
         <h2>Amy who? Amy Hourigan.</h2>
+        <div class="band-rule" id="band-rule" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         <p class="lede">I'm a digital marketing strategist who sees your business a little differently.</p>
         <p>I specialise in SEO, Google Ads and conversion rate optimisation. My autistic pattern recognition and ADHD hyperfocus go straight into your analytics, so I spot what's working, what isn't, and why.</p>
         <p>Since 2012, Amy Who? Digital has combined strong technical knowledge with marketing and communication skills. You get clear explanations, real strategy, and someone focused on your customers every day.</p>
@@ -737,12 +755,29 @@ railLinks.forEach((a, i) => a.addEventListener('click', e => {
 
 /* hero chips carry into the contact form */
 const contact = document.getElementById('contact');
-document.getElementById('interest').addEventListener('submit', e => {
+/* search for yourself: the visitor's business climbs to #1 in the 3D results */
+const find = document.getElementById('find'), sNote = document.getElementById('s-note'), makeReal = document.getElementById('make-real');
+const search = { name: '', t0: 0, on: 0, done: true };
+function searchDone() {
+  search.done = true;
+  sNote.textContent = '';
+  const nb = document.createElement('b'); nb.textContent = search.name;
+  sNote.append("That's ", nb, ', found at #1. This is a demo; Amy does it for real.');
+  makeReal.hidden = false;
+}
+find.addEventListener('submit', e => {
   e.preventDefault();
-  const picked = new Set([...e.target.querySelectorAll('input:checked')].map(i => i.value));
-  contact.querySelectorAll('#c-chips input').forEach(i => { if (picked.has(i.value)) i.checked = true; });
-  document.getElementById('ask').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  setTimeout(() => document.getElementById('c-name').focus({ preventScroll: true }), reduce ? 0 : 900);
+  const v = find.q.value.trim().replace(/\s+/g, ' ');
+  if (!v) { sNote.textContent = 'Type your business name first, then press Find me.'; find.q.focus(); return; }
+  search.name = v; search.t0 = performance.now(); search.on = 1; search.done = false;
+  sNote.textContent = 'Searching for customers who need ' + v + '…';
+  makeReal.hidden = true;
+  if (html.classList.contains('no-webgl') || reduce) setTimeout(searchDone, 500);
+});
+makeReal.addEventListener('click', () => {
+  const biz = document.getElementById('c-biz'), msg = document.getElementById('c-msg');
+  if (!biz.value) biz.value = search.name;
+  if (!msg.value) msg.value = 'I would like ' + search.name + ' to be found by the right customers.';
 });
 
 /* GSAP: orchestrated hero entrance + scroll-triggered chapter reveals */
@@ -754,13 +789,13 @@ if (window.gsap && window.ScrollTrigger && !reduce) {
     .from('.top .frame > *', { y: -14, opacity: .25, duration: 1, stagger: .1, ease: E }, .3)
     .from('.hero h1 .w > span', { yPercent: 38, opacity: .2, duration: 1.15, stagger: .045, ease: E }, .2)
     .from('.hero .lede', { y: 24, opacity: .25, filter: 'blur(6px)', duration: 1.1, ease: E }, .75)
-    .from('.hero legend, .hero .chip', { y: 14, opacity: .25, duration: .9, stagger: .035, ease: E }, .85)
+    .from('.hero .search > *', { y: 14, opacity: .25, duration: .9, stagger: .06, ease: E }, .85)
     .from('.hero .actions > *', { y: 14, opacity: .25, duration: 1, stagger: .08, ease: E }, 1.05);
   document.querySelectorAll('.chapter:not(.hero) .copy, .work-head, .q-head').forEach(el => {
     const st = { trigger: el, start: 'top 80%', once: true };
     const words = el.querySelectorAll('h2 .w > span');
     if (words.length) gsap.from(words, { yPercent: 38, opacity: .2, duration: 1.1, stagger: .035, ease: E, scrollTrigger: st });
-    const rest = [...el.querySelectorAll(':scope > *:not(h2), :scope > .rv > *:not(h2)')].filter(c => !c.classList.contains('rv') && !c.classList.contains('form') && !c.classList.contains('sent'));
+    const rest = [...el.querySelectorAll(':scope > *:not(h2), :scope > .rv > *:not(h2)')].filter(c => !c.classList.contains('rv') && !c.classList.contains('form') && !c.classList.contains('sent') && !c.classList.contains('band-rule'));
     if (rest.length) gsap.from(rest, { y: 28, opacity: .3, filter: 'blur(6px)', duration: 1.1, stagger: .08, ease: E, scrollTrigger: st });
   });
   gsap.from('.principles > div', { y: 32, opacity: .3, duration: 1.1, stagger: .1, ease: E, scrollTrigger: { trigger: '.principles', start: 'top 82%', once: true } });
@@ -1016,6 +1051,18 @@ else {
     ASK.dot.copy(BQ.dot).lerp(BX.dot, a);
   }
   mixAsk(0);
+  /* hero search state: the question folds into a magnifier over the results */
+  const MAGH = build({ strokes: [arc(-.2, .98, 2.15, (315 + 17) * D, (315 + 343) * D, 160), line([-.2 + 3.2 * Math.cos(315 * D), .98 + 3.2 * Math.sin(315 * D)], [3.5, -2.9], 30)], dot: [-.2, .98], z: u => .25 * Math.sin(u * Math.PI * 2) });
+  const HERO = { P: OFF.map(() => new Float32Array(NS * 3)), W: new Float32Array(NS), dot: new THREE.Vector3() };
+  function mixHero(a) {
+    for (let i = 0; i < NB; i++) { const A = BQ.P[i], B = MAGH.P[i], O = HERO.P[i]; for (let k = 0; k < NS * 3; k++) O[k] = A[k] + (B[k] - A[k]) * a; }
+    for (let s = 0; s < NS; s++) HERO.W[s] = BQ.W[s] + (MAGH.W[s] - BQ.W[s]) * a;
+    HERO.dot.copy(BQ.dot).lerp(MAGH.dot, a);
+  }
+  mixHero(0); BUILT[0] = HERO;
+  /* the live line: the bundle laid flat onto the About band rule, wherever it sits on screen */
+  const LINE = { P: OFF.map(() => new Float32Array(NS * 3)), W: new Float32Array(NS), dot: new THREE.Vector3() };
+  const bandRule = document.getElementById('band-rule');
 
   /* superellipse cross-section: a flat painted band with rounded edges */
   const prof = [];
@@ -1048,6 +1095,14 @@ else {
   /* browser chrome dots, only in the Websites chapter */
   const chromeDots = ['#32322D', '#82C8C2', '#34ADA2'].map((h, k) => { const m = new THREE.Mesh(new THREE.SphereGeometry(.17, 24, 16), new THREE.MeshStandardMaterial({ color: h, roughness: .5 })); m.position.set(-2.55 + k * .5, 1.05, .25); m.castShadow = true; group.add(m); return m; });
 
+  /* search results: six pills, the marigold one is the visitor's business */
+  const pillGeo = new THREE.CapsuleGeometry(.24, 2.2, 8, 24);
+  const pills = Array.from({ length: 6 }, (_, k) => { const mesh = new THREE.Mesh(pillGeo, new THREE.MeshStandardMaterial({ color: k === 5 ? '#F4AA33' : (k % 2 ? '#E9E7D2' : '#FFFFFF'), roughness: .5 })); mesh.rotation.z = Math.PI / 2; mesh.castShadow = true; mesh.visible = false; group.add(mesh); return mesh; });
+  const slotY = k => 1.7 - k * .72;
+  const yrEl = document.getElementById('you-result'), yrName = document.getElementById('yr-name'), yrRank = document.getElementById('yr-rank');
+  const lv = new THREE.Vector3();
+  let searchS = 0;
+
   /* ---------- interaction state ---------- */
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), inv = new THREE.Matrix4(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3();
   const local = { x: 99, y: 99, ok: false };
@@ -1060,6 +1115,21 @@ else {
   });
 
   let sCur = 0, sPrev = 0, vel = 0, aliveS = 1, ansS = 0, hoverS = 0;
+  const lA = new THREE.Vector3(), lB = new THREE.Vector3(), lT = new THREE.Vector3(), lD = new THREE.Vector3();
+  function toLocal(sx, sy, out) { ndc.set(sx / innerWidth * 2 - 1, -(sy / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); ray.ray.applyMatrix4(inv); return ray.ray.intersectPlane(plane, out); }
+  function fillLine() {
+    const r = bandRule.getBoundingClientRect(); if (!r.width) return false;
+    const cy = r.top + r.height / 2;
+    if (!toLocal(r.left, cy, lA) || !toLocal(r.right, cy, lB) || !toLocal(r.left, r.top, lT) || !toLocal(r.left, r.bottom, lD)) return false;
+    const sq = Math.max(.02, Math.abs(lT.y - lD.y) / (OFF[NB - 1] - OFF[0] + BW));
+    const len = lB.x - lA.x, yc = (lA.y + lB.y) / 2, cap = CAP * sq;
+    for (let s = 0; s < NS; s++) {
+      const u = s / (NS - 1), e = Math.min(u, 1 - u) * Math.abs(len);
+      LINE.W[s] = sq * (e >= cap ? 1 : Math.sqrt(Math.max(0, 1 - (1 - e / cap) ** 2)));
+      for (let i = 0; i < NB; i++) { const P = LINE.P[i]; P[s * 3] = lA.x + len * u; P[s * 3 + 1] = yc + OFF[i] * sq; P[s * 3 + 2] = 0; }
+    }
+    return true;
+  }
   const tStart = performance.now();
   const clearCol = new THREE.Color(), ground = new THREE.Color(), gA = new THREE.Color(), gB = new THREE.Color(), groundGrey = new THREE.Color('#E8E8E2');
   const tags = [...document.querySelectorAll('.tag')].map(el => ({ el, st: +el.dataset.stage, pt: el.dataset.pt.split(',').map(Number), on: false, counted: false, v: new THREE.Vector3() }));
@@ -1103,11 +1173,14 @@ else {
     const i0 = Math.min(last_, Math.floor(sCur)), i1 = Math.min(last_, i0 + 1);
     const m = smooth(clamp((sCur - i0 - .12) / .76));
     if (i0 === 8 || i1 === 8) mixAsk(smooth(ansS));
+    searchS += (search.on - searchS) * (1 - Math.exp(-dt * 3));
+    if (i0 === 0) mixHero(smooth(searchS));
     const A = BUILT[i0], B = BUILT[i1];
 
     /* camera choreography */
     const SA = SHOTS[i0], SB = SHOTS[i1];
     const shot = SA.map((v, k) => v + (SB[k] - v) * m);
+    const sk = smooth(searchS) * clamp(1 - sCur * 2); shot[2] *= 1 - .2 * sk; shot[0] += (small ? 0 : .03) * sk; shot[1] -= (small ? 0 : .04) * sk;
     const w = innerWidth, h = innerHeight;
     camera.setViewOffset(w, h, -shot[0] * w, shot[1] * h, w, h);
     const intro = reduce ? 1 : ease4(clamp(time / 2.8));
@@ -1132,12 +1205,22 @@ else {
     local.ok = !!ray.ray.intersectPlane(plane, hit);
     if (local.ok) { local.x = hit.x; local.y = hit.y; }
 
+    /* hero to About: the bundle straightens onto the band rule, prints it, then peels away into the sweep */
+    const f = sCur - i0;
+    let Aa = A, Bb = B, mm = m, lineK = 0;
+    if (i0 === 0 && !small && fillLine()) {
+      if (f < .5) { Bb = LINE; mm = smooth(clamp((f - .04) / .42)); } else { Aa = LINE; mm = smooth(clamp((f - .54) / .4)); }
+      lineK = smooth(clamp((1 - Math.abs(f - .5) * 2) * 1.6));
+    }
+    bandRule.style.opacity = small ? 1 : smooth(clamp((sCur - .46) / .06));
+    wall.material.opacity = .2 * (1 - smooth(clamp(lineK * 1.5)));
+
     /* ground repaints per chapter */
     gA.set(grounds[i0]); gB.set(grounds[i1]);
     ground.copy(gA).lerp(gB, m).lerp(groundGrey, 1 - aliveS);
     const gh = '#' + ground.getHexString(); document.body.style.backgroundColor = gh; html.style.setProperty('--ground', gh);
 
-    const swirl = reduce ? 0 : Math.sin(m * Math.PI) * (.4 + vel * .3) * alive;
+    const swirl = reduce || i0 === 0 ? 0 : Math.sin(m * Math.PI) * (.4 + vel * .3) * alive;
     const now_ = now;
     const rip = ripples.map(r => ({ x: r.x, y: r.y, age: (now_ - r.t0) / 1000 })).filter(r => r.age < 3);
     if (state.shock && (now_ - state.shock) / 1000 < 3) rip.push({ x: 0, y: 0, age: (now_ - state.shock) / 1000 - .6 });
@@ -1145,15 +1228,16 @@ else {
 
     for (let i = 0; i < NB; i++) {
       const b = bands[i];
-      const mi = smooth(clamp(m * 1.45 - i * .1125));
-      const PA = A.P[i], PB = B.P[i];
+      const mi = smooth(clamp(mm * 1.45 - i * .1125));
+      const PA = Aa.P[i], PB = Bb.P[i];
       for (let s = 0; s < NS; s++) {
         const u = s / (NS - 1), k3 = s * 3;
         let x = PA[k3] + (PB[k3] - PA[k3]) * mi, y = PA[k3 + 1] + (PB[k3 + 1] - PA[k3 + 1]) * mi, z = PA[k3 + 2] + (PB[k3 + 2] - PA[k3 + 2]) * mi;
-        let ww = A.W[s] + (B.W[s] - A.W[s]) * mi;
+        const wk = Bb === LINE ? mi * mi * mi : Aa === LINE ? 1 - (1 - mi) ** 3 : mi;
+        let ww = Aa.W[s] + (Bb.W[s] - Aa.W[s]) * wk;
         z += swirl * Math.sin(u * Math.PI * 3 + i * .9 + time * 1.5) * 1.1;
-        z += alive * .055 * Math.sin(time * .9 + u * 9 + i * .55);
-        if (hov > .01) { const dx = x - local.x, dy = y - local.y; z += hov * .4 * Math.exp(-(dx * dx + dy * dy) / 1.4); }
+        z += alive * (1 - lineK) * .055 * Math.sin(time * .9 + u * 9 + i * .55);
+        if (hov > .01 && lineK < .99) { const dx = x - local.x, dy = y - local.y; z += hov * .4 * Math.exp(-(dx * dx + dy * dy) / 1.4); }
         for (const r of rip) { if (r.age < 0) continue; const dd = Math.hypot(x - r.x, y - r.y); z += .6 * Math.exp(-(((dd - r.age * 5.5) * 1.5) ** 2)) * Math.exp(-r.age * 1.5); }
         if (!reduce && time < 3.4) {
           const head = ease4(clamp((time - .25 - i * .1) / 2.1)) * 1.08;
@@ -1183,7 +1267,7 @@ else {
       b.g.attributes.position.needsUpdate = true; b.g.attributes.normal.needsUpdate = true;
       /* coral marks only the band in motion (the leader); static drains colour */
       b.mat.color.copy(baseCols[i]);
-      if (i === 0) b.mat.color.lerp(coral, clamp(Math.sin(m * Math.PI) * 1.2) * .4 * alive);
+      if (i === 0) b.mat.color.lerp(coral, clamp(Math.sin(mm * Math.PI) * 1.2) * .4 * alive * (1 - lineK));
       b.mat.color.lerp(grey, 1 - aliveS);
     }
 
@@ -1194,7 +1278,28 @@ else {
     dot.position.z += .35 * Math.sin(md * Math.PI);
     let sc = (1 + Math.sin(time * 1.6) * .02 * alive) * (reduce ? 1 : ease4(clamp((time - 2.0) / .7)));
     for (const r of rip) if (r.age >= 0 && r.age < .8) sc *= 1 + .08 * Math.sin(r.age / .8 * Math.PI);
-    dot.scale.setScalar(sc);
+    const heroK = clamp(1 - sCur * 4.5), pv = smooth(searchS) * heroK;
+    dot.scale.setScalar(Math.max(.001, sc * (1 - pv)));
+
+    /* the visitor's result climbs from #6 to #1 */
+    if (pv > .01) {
+      const st = (now - search.t0) / 1000;
+      const climbT = reduce ? 5 : clamp((st - 1.0) / 2.6) * 5;
+      const youRank = 5 - Math.min(5, ease4(clamp(climbT % 1)) + Math.floor(climbT));
+      for (let k = 0; k < 5; k++) pills[k].position.set(-.2, slotY(k + clamp(k + 1 - youRank)), -.45);
+      const hop = Math.sin(clamp(climbT % 1) * Math.PI) * (climbT < 5 ? .5 : 0);
+      pills[5].position.set(-.2 + hop * .5, slotY(youRank), -.45 + hop);
+      pills.forEach((p, k) => { p.visible = true; p.scale.setScalar(Math.max(.001, smooth(clamp(pv * 1.6 - k * .08)))); p.material.color.lerp(grey, 0); });
+      if (!search.done && climbT >= 5) { searchDone(); ripples.push({ x: -.2, y: slotY(0), t0: now }); if (ripples.length > 3) ripples.shift(); }
+      const p5 = pills[5].position;
+      lv.set(p5.x - 1.1, p5.y, p5.z + .25); group.localToWorld(lv); lv.project(camera); const lx = (lv.x * .5 + .5) * w;
+      lv.set(p5.x + 1.1, p5.y, p5.z + .25); group.localToWorld(lv); lv.project(camera); const rx = (lv.x * .5 + .5) * w, ly = (-lv.y * .5 + .5) * h;
+      yrEl.style.width = Math.max(0, rx - lx) + 'px';
+      yrEl.style.transform = 'translate3d(' + lx + 'px,' + ly + 'px,0) translateY(-50%)';
+      yrEl.style.opacity = smooth(clamp((pv - .6) / .4));
+      if (yrName.textContent !== search.name) yrName.textContent = search.name;
+      yrRank.textContent = '#' + (Math.round(youRank) + 1);
+    } else { pills.forEach(p => { p.visible = false; }); yrEl.style.opacity = 0; }
     dotMat.color.copy(marigold).lerp(grey, 1 - aliveS); dotMat.emissive.copy(dotMat.color);
     const web = clamp(1 - Math.abs(sCur - 5) * 2.2);
     chromeDots.forEach((d, k) => { d.scale.setScalar(Math.max(.001, smooth(clamp(web * 1.6 - k * .15)))); });

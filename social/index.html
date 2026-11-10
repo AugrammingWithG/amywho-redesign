@@ -7,11 +7,11 @@
 <title>Amy Who? Social Posts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noticia+Text:ital,wght@0,700;1,700&family=Open+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noticia+Text:ital,wght@0,700;1,700&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: two 4:5 loops side by side on Amy's paper cream (grain textured), each with its ready-to-post caption underneath. */
 :root{--charcoal:#32322D;--ink:#26261F;--marigold:#F4AA33;--cream:#FAF9E3;--cream-2:#D9D7C0;--teal:#34ADA2;--teal-700:#23736C;--fg-2:#56564D;--line:rgba(50,50,45,.16);
-  --display:'Noticia Text',Georgia,serif;--body:'Open Sans',Arial,sans-serif;color-scheme:light}
+  --display:'Noticia Text',Georgia,serif;--body:'Barlow','DIN Next','Helvetica Neue',Arial,sans-serif;color-scheme:light}
 *{box-sizing:border-box}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .2 0 0 0 0 .17 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
 body{margin:0;background:var(--cream);color:var(--charcoal);font:400 1rem/1.6 var(--body)}
@@ -23,8 +23,8 @@ header img{width:170px;height:auto;display:block;margin-bottom:22px}
 h1{font:700 clamp(2rem,4vw,3.2rem)/1.05 var(--display);margin:0;max-width:20ch;text-wrap:balance}
 h1 em{color:var(--teal-700)}
 header p{margin:.8rem 0 0;color:var(--fg-2);max-width:38rem}
-.to-site{display:inline-flex;align-items:center;gap:.5em;background:var(--marigold);color:var(--charcoal);font-weight:700;text-decoration:none;padding:.95rem 1.45rem;border-radius:10px;box-shadow:0 12px 26px -14px rgba(122,78,8,.55);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s cubic-bezier(.16,1,.3,1)}
-.to-site:hover{transform:translateY(-2px);box-shadow:0 18px 30px -14px rgba(122,78,8,.6)}
+.to-site{display:inline-flex;align-items:center;gap:.5em;background:var(--marigold);color:var(--charcoal);font-weight:700;text-decoration:none;padding:.95rem 1.45rem;border-radius:10px;box-shadow:0 12px 26px -14px rgba(50,50,45,.5);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s cubic-bezier(.16,1,.3,1)}
+.to-site:hover{transform:translateY(-2px);box-shadow:0 18px 30px -14px rgba(50,50,45,.55)}
 .to-site:active{transform:translateY(1px)}
 .posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
 .post{display:grid;gap:18px;align-content:start;min-width:0}
@@ -43,6 +43,16 @@ h2{font:700 1.45rem/1.2 var(--display);margin:0}
 .files code{font-size:.82rem;color:var(--charcoal)}
 .why{margin-top:56px;padding-top:28px;border-top:1.5px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;font-size:.95rem;color:var(--fg-2)}
 .why h3{font:700 1.1rem var(--display);color:var(--charcoal);margin:0 0 .4rem}
+.examples{margin-top:72px;padding-top:36px;border-top:1.5px solid var(--line);display:grid;gap:28px}
+.ex-head h2{font:700 clamp(1.8rem,3vw,2.5rem)/1.1 var(--display);margin:0}
+.ex-head p{margin:.6rem 0 0;color:var(--fg-2);max-width:44rem}
+.inline{color:var(--teal-700);text-underline-offset:3px}
+.ex-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.ex{display:grid;gap:10px;text-decoration:none;min-width:0}
+.ex img{width:100%;height:auto;border-radius:10px;box-shadow:0 0 0 6px #fff,0 0 0 7px var(--line),0 24px 44px -30px rgba(50,50,45,.55);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.ex:hover img{transform:translateY(-4px)}
+.ex span{font-weight:600;font-size:.95rem;margin-top:6px}
+@media (max-width:980px){.ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:820px){.posts,.why{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -94,6 +104,19 @@ Want to know where you rank? Link in bio.</p>
     <div><h3>Her brand, not ours</h3>Charcoal, marigold, cream and teal straight from her current site, with her logo, Noticia Text headings and the black-and-white stripe divider.</div>
     <div><h3>3D with a job to do</h3>The question mark answers itself, and the marigold result climbs into the top three. Each loop explains one idea in under eight seconds.</div>
     <div><h3>One system, every channel</h3>The posts run on the same 3D band engine as the website concept, so the feed and the site feel like one brand.</div>
+  </section>
+
+  <section class="examples" aria-labelledby="ex-h">
+    <div class="ex-head">
+      <h2 id="ex-h">Example posts</h2>
+      <p>Four static posts in the website's design language, exported as 1080 × 1350 PNGs. Open one for the full-size file, or see them with captions on the <a class="inline" href="posts.html">plates page</a>.</p>
+    </div>
+    <div class="ex-grid">
+      <a class="ex" href="export/png/amywho-post-01-no-silly-questions.png"><img src="export/png/amywho-post-01-no-silly-questions.png" alt="Post: No question is too silly. A striped 3D question mark with callouts: ask about SEO, ads or your website; comments and DMs are open; a plain-English answer, every time." width="1080" height="1350" loading="lazy"><span>No question is too silly</span></a>
+      <a class="ex" href="export/png/amywho-post-02-where-do-you-rank.png"><img src="export/png/amywho-post-02-where-do-you-rank.png" alt="Post: Where does your business rank? A 3D magnifier over search results with a marigold result at number one; 54.4% of all clicks go to the top three Google results (Backlinko)." width="1080" height="1350" loading="lazy"><span>Where does your business rank?</span></a>
+      <a class="ex" href="export/png/amywho-post-03-meet-amy.png"><img src="export/png/amywho-post-03-meet-amy.png" alt="Post: Amy who? Amy Hourigan. Amy's portrait on a tartan swatch with callouts: founder of Amy Who? Digital; pattern recognition and hyperfocus pointed at your analytics; growing businesses since 2012." width="1080" height="1350" loading="lazy"><span>Amy who? Amy Hourigan.</span></a>
+      <a class="ex" href="export/png/amywho-post-04-portside-record.png"><img src="export/png/amywho-post-04-portside-record.png" alt="Post: A record for school tours. Portside Christian College: a new website with a page for every age group, Google Ads for school tours, and record school-tour conversions." width="1080" height="1350" loading="lazy"><span>A record for school tours</span></a>
+    </div>
   </section>
 </div>
 <script>
