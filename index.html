@@ -179,10 +179,11 @@ h3{font-size:clamp(1.3rem,1.6vw,1.55rem);line-height:1.2}
 .plate{margin:0;position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/5;background:var(--white);
   box-shadow:0 0 0 8px var(--white),0 30px 60px -28px rgba(50,50,45,.55)}
 .plate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 30%}
-.plate .duo{filter:grayscale(1) contrast(1.06) brightness(1.03)}
+.plate .duo{filter:grayscale(.45) contrast(1.03)}
 .plate .full{filter:url(#burn)}
 .plate-wrap .plate{transform:rotate(-1.6deg) scale(.985);transition:transform 1.1s var(--ease)}
-.plate-wrap .plate.color,.plate-wrap .plate:hover{transform:scale(1.07);box-shadow:0 0 0 8px var(--white),0 40px 80px -30px rgba(50,50,45,.6)}
+.plate-wrap .plate.color{transform:none}
+.plate-wrap .plate:hover{transform:scale(1.07);box-shadow:0 0 0 8px var(--white),0 40px 80px -30px rgba(50,50,45,.6)}
 .plate-wrap{z-index:2}
 .plate-cap{margin-top:3.4rem;font-size:.9rem;color:var(--fg-2);display:flex;justify-content:space-between;gap:1rem}
 .plate-cap span{background:var(--ground, var(--paper));padding:.2rem .55rem;border-radius:6px;transition:opacity .5s var(--ease)}
@@ -475,7 +476,7 @@ footer{position:relative;z-index:2}
           <img class="duo" src="assets/amy-headphones.jpg" alt="" width="1000" height="1108">
           <img class="full" src="assets/amy-headphones.jpg" alt="Amy Hourigan smiling in orange headphones, holding her phone" width="1000" height="1108">
         </figure>
-        <div class="plate-cap"><span>Amy Hourigan, founder</span><span>Hover for colour</span></div>
+        <div class="plate-cap"><span>Amy Hourigan, founder</span></div>
       </div>
     </div>
   </section>
@@ -867,8 +868,9 @@ function burnTo(v) {
   else { burn.p = v; setBurn(); }
 }
 setBurn();
-if (fine) { plate.addEventListener('pointerenter', () => burnTo(1)); plate.addEventListener('pointerleave', () => burnTo(0)); }
-else new IntersectionObserver(es => es.forEach(e => burnTo(e.intersectionRatio > .7 ? 1 : 0)), { threshold: [0, .7, 1] }).observe(plate);
+/* colour arrives on its own as the portrait settles into view (no hover needed); hover only adds the lift */
+new IntersectionObserver(es => es.forEach(e => burnTo(e.intersectionRatio > .6 ? 1 : 0)), { threshold: [0, .6, 1] }).observe(plate);
+plate.addEventListener('pointerenter', () => burnTo(1));
 
 /* cursor: a round hairline that knows what it is over */
 let pointer = { x: innerWidth * .7, y: innerHeight * .5, nx: 0, ny: 0, inside: false };
