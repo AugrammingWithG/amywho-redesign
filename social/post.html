@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=1080">
+<title>Amy Who? Post Renderer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noticia+Text:ital,wght@0,400;0,700;1,700&family=Open+Sans:wght@400;600;700&display=swap">
+<style>
+/* Instagram 4:5 canvas in Amy's CURRENT brand guide: charcoal / marigold / cream / teal, Noticia Text + Open Sans, logo, diagonal stripe motif. */
+:root{--charcoal:#32322D;--marigold:#F4AA33;--cream:#FAF9E3;--teal:#34ADA2;--teal-700:#23736C;--coral:#EA492E;color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;background:#111}
+.post{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:'Open Sans',Arial,sans-serif}
+.p1{background:var(--charcoal);color:var(--cream)}
+.p2{background:var(--cream);color:var(--charcoal)}
+canvas{position:absolute;inset:0;width:1080px;height:1350px;display:block}
+.layer{position:absolute;inset:0;pointer-events:none}
+.logo{position:absolute;left:72px;top:68px;width:250px}
+.handle{position:absolute;right:72px;top:92px;font-weight:600;font-size:26px;letter-spacing:.01em;opacity:.85}
+.stripe{position:absolute;left:0;right:0;bottom:0;height:44px}
+.p1 .stripe{background:repeating-linear-gradient(-45deg,var(--cream) 0 13px,var(--charcoal) 13px 26px)}
+.p2 .stripe{background:repeating-linear-gradient(-45deg,var(--charcoal) 0 13px,var(--cream) 13px 26px)}
+h1{font-family:'Noticia Text',Georgia,serif;font-weight:700;margin:0;line-height:1.02;letter-spacing:-.01em}
+.p1 h1{position:absolute;left:72px;right:72px;top:190px;font-size:104px}
+.p1 h1 em{font-style:italic;color:var(--marigold)}
+.sub{position:absolute;left:72px;right:72px;bottom:92px;font-size:38px;line-height:1.3;font-weight:600}
+.sub span{position:absolute;left:0;right:0;bottom:0;transition:none}
+.sub small{display:block;font-weight:400;font-size:28px;opacity:.8;margin-top:10px}
+.p2 .kick{position:absolute;left:72px;right:72px;top:190px;font-family:'Noticia Text',Georgia,serif;font-weight:700;font-size:62px;line-height:1.08}
+.p2 .big{position:absolute;left:66px;top:318px;font-family:'Noticia Text',Georgia,serif;font-weight:700;font-size:230px;line-height:1;color:var(--charcoal);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.p2 .big b{color:var(--marigold);-webkit-text-stroke:0}
+.p2 .of{position:absolute;left:72px;top:560px;font-family:'Noticia Text',Georgia,serif;font-weight:700;font-size:62px}
+.p2 .src{position:absolute;left:74px;top:648px;font-size:24px;opacity:.7}
+.p2 .sub{left:auto;right:72px;bottom:auto;top:340px;max-width:340px;text-align:right;font-family:'Noticia Text',Georgia,serif;font-size:40px;line-height:1.12}
+.p2 .sub small{font-family:'Open Sans',Arial,sans-serif;font-size:24px;margin-top:14px}
+.you-label{position:absolute;left:0;top:0;display:flex;align-items:center;gap:12px;white-space:nowrap;font-weight:700;font-size:26px;color:var(--cream);background:var(--charcoal);padding:9px 16px;border-radius:8px;transform:translate(-100%,-50%)}
+.you-label::after{content:"";position:absolute;right:-9px;top:50%;width:0;height:0;border:9px solid transparent;border-left-color:var(--charcoal);border-right:0;transform:translateY(-50%)}
+.you-label b{color:var(--marigold);font-family:'Noticia Text',Georgia,serif;font-size:30px}
+</style>
+</head>
+<body>
+<div class="post" id="post">
+  <canvas id="c" width="1080" height="1350"></canvas>
+  <div class="layer" id="layer"></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const P = +(new URLSearchParams(location.search).get('p') || 1);
+const LOOP = 8;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const smooth = t => t * t * (3 - 2 * t);
+const ease = t => t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+const post = document.getElementById('post'), layer = document.getElementById('layer');
+post.className = 'post p' + P;
+
+if (P === 1) layer.innerHTML = `
+  <img class="logo" src="../assets/logo-light.png" alt="Amy Who? Digital">
+  <div class="handle">@amywhodigital</div>
+  <h1>No question<br>is too <em>silly.</em></h1>
+  <div class="sub"><span id="s1">Ask me anything about SEO, ads and websites.<small>Comments and DMs are open.</small></span><span id="s2">Plain-English answers.<small>No jargon. Ever.</small></span></div>
+  <div class="stripe"></div>`;
+else layer.innerHTML = `
+  <img class="logo" src="../assets/logo-dark.png" alt="Amy Who? Digital">
+  <div class="handle">SEO tip</div>
+  <div class="kick">The top 3 Google results get</div>
+  <div class="big"><b id="num">0.0</b>%</div>
+  <div class="of">of all clicks.</div>
+  <div class="src">Source: Backlinko</div>
+  <div class="sub" id="sub2">Where does your business rank?<small>Let's get you into the top three.</small></div>
+  <div class="you-label" id="youLabel">Your business <b id="rank">#6</b></div>
+  <div class="stripe"></div>`;
+
+/* ---------- renderer ---------- */
+const W = 1080, H = 1350;
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, preserveDrawingBuffer: true, alpha: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0);
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .55;
+const camera = new THREE.PerspectiveCamera(30, W / H, .1, 100);
+camera.position.set(0, 0, 17);
+const key = new THREE.DirectionalLight(0xfff6e0, 2.1);
+key.position.set(-5, 7, 11); key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
+Object.assign(key.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 });
+key.shadow.radius = 7; key.shadow.bias = -.0008;
+scene.add(key, new THREE.HemisphereLight(0xfaf9e3, 0x23736c, .55));
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: P === 1 ? .38 : .16 }));
+wall.position.z = -2.6; wall.receiveShadow = true; scene.add(wall);
+const group = new THREE.Group(); scene.add(group);
+
+/* ---------- the band bundle (same engine as the website) ---------- */
+const NB = 5, NS = 420, R = 16, BW = .3, GAP = .07, TH = .2, CAP = .2;
+const OFF = [-2, -1, 0, 1, 2].map(k => k * (BW + GAP));
+const V = (x, y) => new THREE.Vector3(x, y, 0);
+const D = Math.PI / 180;
+const arc = (cx, cy, r, a0, a1, n = 90) => Array.from({ length: n + 1 }, (_, k) => { const a = a0 + (a1 - a0) * k / n; return V(cx + r * Math.cos(a), cy + r * Math.sin(a)); });
+const line = (a, b, n = 30) => Array.from({ length: n + 1 }, (_, k) => V(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n));
+const bez = (a, b, c, d, n = 40) => new THREE.CubicBezierCurve3(V(...a), V(...b), V(...c), V(...d)).getPoints(n);
+const join = (...parts) => parts.reduce((o, p, i) => o.concat(i ? p.slice(1) : p), []);
+function build(sh) {
+  const pts = [], sid = [];
+  sh.strokes.forEach((st, si) => st.forEach(p => { pts.push(p); sid.push(si); }));
+  const n = pts.length, cum = new Float32Array(n), arcS = new Float32Array(n), slen = [];
+  for (let j = 1; j < n; j++) { const d = pts[j].distanceTo(pts[j - 1]), tr = sid[j] !== sid[j - 1]; cum[j] = cum[j - 1] + d * (tr ? .12 : 1); arcS[j] = tr ? 0 : arcS[j - 1] + d; }
+  for (let j = 0; j < n; j++) slen[sid[j]] = arcS[j];
+  const total = cum[n - 1], c = [], Wt = new Float32Array(NS), SS = new Int16Array(NS);
+  let j = 0; const [ox, oy] = sh.off || [0, 0];
+  for (let s = 0; s < NS; s++) {
+    const t = s / (NS - 1) * total;
+    while (j < n - 2 && cum[j + 1] < t) j++;
+    const f = clamp((t - cum[j]) / ((cum[j + 1] - cum[j]) || 1));
+    const p = pts[j].clone().lerp(pts[j + 1], f); p.x += ox; p.y += oy; p.z = sh.z ? sh.z(s / (NS - 1)) : 0;
+    SS[s] = sid[j] !== sid[j + 1] ? -1 : sid[j];
+    if (SS[s] < 0) Wt[s] = 0; else { const d = arcS[j] + (arcS[j + 1] - arcS[j]) * f, L = slen[sid[j]], e = Math.min(d, L - d); Wt[s] = e >= CAP ? 1 : Math.sqrt(Math.max(0, 1 - (1 - e / CAP) ** 2)); }
+    c.push(p);
+  }
+  const Pb = OFF.map(() => new Float32Array(NS * 3));
+  for (let s = 0; s < NS; s++) {
+    const a = c[s > 0 && SS[s - 1] === SS[s] ? s - 1 : s], b = c[s < NS - 1 && SS[s + 1] === SS[s] ? s + 1 : s];
+    let tx = b.x - a.x, ty = b.y - a.y; const l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
+    OFF.forEach((o, i) => { Pb[i][s * 3] = c[s].x - ty * o; Pb[i][s * 3 + 1] = c[s].y + tx * o; Pb[i][s * 3 + 2] = c[s].z; });
+  }
+  for (let s = 0; s < NS; s++) if (SS[s] < 0) {
+    let p = s, q = s; while (p > 0 && SS[p] < 0) p--; while (q < NS - 1 && SS[q] < 0) q++;
+    const src = SS[q] < 0 || (SS[p] >= 0 && s - p <= q - s) ? p : q;
+    Pb.forEach(B => { B[s * 3] = B[src * 3]; B[s * 3 + 1] = B[src * 3 + 1]; B[s * 3 + 2] = B[src * 3 + 2]; });
+  }
+  return { P: Pb, W: Wt, dot: new THREE.Vector3(sh.dot[0] + ox, sh.dot[1] + oy, .2) };
+}
+const prof = [];
+for (let k = 0; k < R; k++) { const a = k / R * Math.PI * 2, co = Math.cos(a), si = Math.sin(a); prof.push([Math.sign(co) * Math.abs(co) ** .42 * BW / 2, Math.sign(si) * Math.abs(si) ** .42 * TH / 2]); }
+const pn = prof.map((p, k) => { const a = prof[(k + R - 1) % R], b = prof[(k + 1) % R]; let nx = b[1] - a[1], ny = -(b[0] - a[0]); const l = Math.hypot(nx, ny) || 1; return [nx / l, ny / l]; });
+
+const qa = -40 * D, qe = [1.6 * Math.cos(qa), 1.55 + 1.6 * Math.sin(qa)], qt = [Math.sin(qa), -Math.cos(qa)];
+const QM = build({ strokes: [join(arc(0, 1.55, 1.6, 200 * D, qa, 110), bez(qe, [qe[0] + qt[0] * .85, qe[1] + qt[1] * .85], [0, -.15], [0, -.75]), line([0, -.75], [0, -1.3], 12))], dot: [0, -2.62], z: u => .55 * Math.sin(u * Math.PI), off: [0, -.42] });
+const EX = build({ strokes: [line([0, 3.55], [0, -1.05], 120)], dot: [0, -2.55], z: u => .35 * Math.sin(u * Math.PI), off: [0, -.42] });
+const MAG = build({ strokes: [arc(0, 0, 2.15, (315 + 17) * D, (315 + 343) * D, 160), line([3.2 * Math.cos(315 * D), 3.2 * Math.sin(315 * D)], [3.4, -3.4], 30)], dot: [0, 0], z: u => .3 * Math.sin(u * Math.PI * 2) });
+
+const HEX = P === 1 ? ['#FAF9E3', '#F4AA33', '#34ADA2', '#F4AA33', '#FAF9E3'] : ['#32322D', '#23736C', '#34ADA2', '#F4AA33', '#32322D'];
+const cols = HEX.map(h => new THREE.Color(h)), coral = new THREE.Color('#EA492E');
+const bands = OFF.map((o, i) => {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(NS * R * 3), nor = new Float32Array(NS * R * 3), idx = [];
+  for (let s = 0; s < NS - 1; s++) for (let k = 0; k < R; k++) { const a = s * R + k, b = s * R + (k + 1) % R, c = (s + 1) * R + k, d = (s + 1) * R + (k + 1) % R; idx.push(a, b, c, b, d, c); }
+  g.setIndex(idx); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+  const mat = new THREE.MeshStandardMaterial({ color: cols[i].clone(), roughness: .55, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.frustumCulled = false; group.add(mesh);
+  return { g, pos, nor, mat, cx: new Float32Array(NS), cy: new Float32Array(NS), cz: new Float32Array(NS), cw: new Float32Array(NS) };
+});
+const dotMat = new THREE.MeshStandardMaterial({ color: P === 1 ? '#EA492E' : '#F4AA33', roughness: .42 });
+const dot = new THREE.Mesh(new THREE.SphereGeometry(.62, 48, 32), dotMat); dot.castShadow = true; group.add(dot);
+
+/* post 2: search results as rounded pills */
+const pills = [];
+if (P === 2) {
+  dot.visible = false;
+  for (let k = 0; k < 6; k++) {
+    const you = k === 5;
+    const m = new THREE.Mesh(new THREE.CapsuleGeometry(.27, 2.3, 8, 24), new THREE.MeshStandardMaterial({ color: you ? '#F4AA33' : (k % 2 ? '#D9D6BC' : '#FFFFFF'), roughness: .5 }));
+    m.rotation.z = Math.PI / 2; m.castShadow = true; group.add(m); pills.push(m);
+  }
+}
+
+function bundle(A, B, mFn, time, swirlAmp, ripples, wave = .1) {
+  for (let i = 0; i < NB; i++) {
+    const b = bands[i], mi = mFn(i), PA = A.P[i], PB = B.P[i];
+    for (let s = 0; s < NS; s++) {
+      const u = s / (NS - 1), k3 = s * 3;
+      let x = PA[k3] + (PB[k3] - PA[k3]) * mi, y = PA[k3 + 1] + (PB[k3 + 1] - PA[k3 + 1]) * mi, z = PA[k3 + 2] + (PB[k3 + 2] - PA[k3 + 2]) * mi;
+      z += swirlAmp * Math.sin(Math.PI * mi) * Math.sin(u * Math.PI * 3 + i * .9) * 1.1;
+      z += wave * Math.sin(time / LOOP * Math.PI * 2 * 2 + u * 9 + i * .55);
+      for (const r of ripples) { const dd = Math.hypot(x - r.x, y - r.y); z += r.a * Math.exp(-(((dd - r.age * 5.5) * 1.5) ** 2)) * Math.exp(-r.age * 1.5); }
+      b.cx[s] = x; b.cy[s] = y; b.cz[s] = z; b.cw[s] = A.W[s] + (B.W[s] - A.W[s]) * mi;
+    }
+    let lnx = 1, lny = 0;
+    for (let s = 0; s < NS; s++) {
+      const live = b.cw[s] > 0, a = s > 0 && (!live || b.cw[s - 1] > 0) ? s - 1 : s, c = s < NS - 1 && (!live || b.cw[s + 1] > 0) ? s + 1 : s;
+      let tx = b.cx[c] - b.cx[a], ty = b.cy[c] - b.cy[a], tz = b.cz[c] - b.cz[a];
+      const tl = Math.hypot(tx, ty, tz) || 1; tx /= tl; ty /= tl; tz /= tl;
+      let nx = -ty, ny = tx; const nl = Math.hypot(nx, ny);
+      if (nl < 1e-4) { nx = lnx; ny = lny; } else { nx /= nl; ny /= nl; lnx = nx; lny = ny; }
+      const bx = -tz * ny, by = tz * nx, bz = tx * ny - ty * nx, ww = b.cw[s];
+      for (let k = 0; k < R; k++) {
+        const o = (s * R + k) * 3, p0 = prof[k][0] * ww, p1 = prof[k][1] * ww, q0 = pn[k][0], q1 = pn[k][1];
+        b.pos[o] = b.cx[s] + nx * p0 + bx * p1; b.pos[o + 1] = b.cy[s] + ny * p0 + by * p1; b.pos[o + 2] = b.cz[s] + bz * p1;
+        b.nor[o] = nx * q0 + bx * q1; b.nor[o + 1] = ny * q0 + by * q1; b.nor[o + 2] = bz * q1;
+      }
+    }
+    b.g.attributes.position.needsUpdate = true; b.g.attributes.normal.needsUpdate = true;
+  }
+}
+
+/* ---------- deterministic timelines (seamless 8s loops) ---------- */
+function renderAt(t) {
+  t = ((t % LOOP) + LOOP) % LOOP;
+  const spin = Math.sin(t / LOOP * Math.PI * 2);
+  if (P === 1) {
+    // ? hold → ! (2.4–3.6) → hold → ? (5.6–6.8) → hold; ripple at 1.0s and on the "!" landing
+    const toEx = ease(clamp((t - 2.4) / 1.2)), back = ease(clamp((t - 5.6) / 1.2));
+    const m = toEx * (1 - back);
+    const forward = t < 5;
+    const A = forward ? QM : EX, B = forward ? EX : QM, mm = forward ? toEx : back;
+    bundle(A, B, i => smooth(clamp(mm * 1.45 - i * .1125)), t, .45, [
+      { x: 0, y: -3, age: t - 1.0, a: 1 }, { x: 0, y: -3, age: t - 3.7, a: .8 }
+    ].filter(r => r.age > 0 && r.age < 3));
+    bands[0].mat.color.copy(cols[0]).lerp(coral, clamp(Math.sin(Math.PI * mm) * 1.1) * .45);
+    const dm = smooth(clamp(mm * 1.3 - .15));
+    dot.position.copy(A.dot).lerp(B.dot, dm); dot.position.y += Math.sin(dm * Math.PI) * .7; dot.position.z += .3 * Math.sin(dm * Math.PI);
+    const bounce = (k => k > 0 && k < .7 ? Math.sin(k / .7 * Math.PI) * .09 : 0);
+    dot.scale.setScalar(1 + bounce(t - 1.0) + bounce(t - 3.7) + Math.sin(t / LOOP * Math.PI * 4) * .03);
+    group.rotation.y = .18 + spin * .12; group.rotation.x = Math.cos(t / LOOP * Math.PI * 2) * .04;
+    group.position.set(1.45, -.8, 0); group.scale.setScalar(.66);
+    const out1 = clamp((t - 3.0) / .25) * (1 - clamp((t - 6.45) / .25)), in2 = clamp((t - 3.25) / .25) * (1 - clamp((t - 6.2) / .25));
+    const swap = in2;
+    document.getElementById('s1').style.opacity = 1 - out1; document.getElementById('s2').style.opacity = in2;
+    document.getElementById('s1').style.transform = `translateY(${-swap * 18}px)`; document.getElementById('s2').style.transform = `translateY(${(1 - swap) * 18}px)`;
+  } else {
+    // marigold result climbs #6 → #1 (0.6s steps from 0.8s), holds, then slides back at 7.2s
+    bundle(MAG, MAG, () => 0, t, 0, [{ x: 0, y: 0, age: t - 4.15, a: .9 }].filter(r => r.age > 0 && r.age < 3), .09);
+    const climbT = clamp((t - .8) / 3.0) * 5;
+    const resetK = ease(clamp((t - 7.2) / .7));
+    const youRank = 5 - Math.min(5, ease(clamp(climbT % 1)) + Math.floor(climbT)) + resetK * 5; // 5 = bottom, 0 = top
+    const ys = k => (1 - k) * .72;
+    /* everyone the marigold result overtakes slides down one slot */
+    [0, 1, 2, 3, 4].forEach(k => pills[k].position.set(-.15, ys(k + clamp(k + 1 - youRank)), 0));
+    const hop = Math.sin(clamp(climbT % 1) * Math.PI) * (climbT < 5 && t < 7.2 ? .35 : 0);
+    pills[5].position.set(-.15 + hop * .7, ys(youRank), .35 + hop);
+    pills[5].scale.setScalar(1 + (t > 3.8 && t < 7.2 ? .025 * Math.sin((t - 3.8) * 3) : 0));
+    group.position.set(1.5, -1.95 + Math.cos(t / LOOP * Math.PI * 2) * .06, 0);
+    group.rotation.y = -.14 + spin * .07; group.scale.setScalar(.55);
+    const pct = 54.4 * ease(clamp((t - .8) / 3.3)) * (1 - resetK);
+    document.getElementById('num').textContent = pct.toFixed(1);
+    document.getElementById('rank').textContent = '#' + (Math.round(youRank) + 1);
+    const lp = new THREE.Vector3(-1.62, 0, 0); pills[5].updateMatrixWorld(true); group.updateMatrixWorld(true);
+    lp.set(pills[5].position.x - 1.62, pills[5].position.y, pills[5].position.z); group.localToWorld(lp); lp.project(camera);
+    const lab = document.getElementById('youLabel'); lab.style.left = ((lp.x * .5 + .5) * W - 14) + 'px'; lab.style.top = ((-lp.y * .5 + .5) * H) + 'px';
+  }
+  camera.setViewOffset(W, H, 0, 0, W, H);
+  camera.lookAt(0, 0, 0);
+  renderer.render(scene, camera);
+}
+window.renderAt = renderAt;
+await document.fonts.ready;
+await Promise.all([...document.images].map(i => i.decode().catch(() => {})));
+window.__ready = true;
+if (!new URLSearchParams(location.search).has('record')) {
+  const t0 = performance.now();
+  (function loop(now) { renderAt((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+} else renderAt(0);
+</script>
+</body>
+</html>
