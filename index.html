@@ -16,7 +16,7 @@
 :root{
   --wall:#32322D;        /* charcoal painted wall (logo ink) */
   --wall-deep:#113A36;   /* darkest teal room */
-  --ink:#1E1E1A;         /* hard shadow under pressable things */
+  --ink:#1E1E1A;         /* footer base */
   --cream:#FAF9E3;
   --cream-2:#D9D7C0;     /* secondary text on dark walls */
   --sand:#C8C7B6;
@@ -75,7 +75,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .nav a:not(.btn):hover::after{transform:scaleX(1);transform-origin:0 50%}
 @media (max-width:760px){.nav a:not(.btn){display:none}}
 
-/* ---------- pressable pill (Neubrutalist raise: presses into its own shadow) ---------- */
+/* ---------- action button: squared, soft lift (formal register) ---------- */
 .btn{--lift:0px;display:inline-flex;align-items:center;gap:.6em;font:600 1.04rem/1 var(--body);letter-spacing:.01em;color:var(--wall);background:var(--marigold);
   border:0;border-radius:10px;padding:1rem 1.5rem;text-decoration:none;cursor:pointer;
   box-shadow:0 calc(12px + var(--lift) * 3) 28px -14px rgba(0,0,0,.7);transform:translate(var(--mx,0px), calc(var(--my,0px) - var(--lift)));
@@ -783,7 +783,7 @@ const burnA = document.getElementById('burnA'), burnB = document.getElementById(
 function setBurn() { const t = 1.06 - burn.p * 1.14; burnA.setAttribute('intercept', (-14 * t).toFixed(3)); burnB.setAttribute('intercept', (-14 * (t - .06)).toFixed(3)); }
 function burnTo(v) {
   plate.classList.toggle('color', v === 1);
-  if (window.gsap && !reduce) gsap.to(burn, { p: v, duration: 1.4, ease: 'power2.out', overwrite: true, onUpdate: setBurn });
+  if (window.gsap && !reduce) gsap.to(burn, { p: v, duration: 1.4, ease: 'expo.out', overwrite: true, onUpdate: setBurn });
   else { burn.p = v; setBurn(); }
 }
 setBurn();
